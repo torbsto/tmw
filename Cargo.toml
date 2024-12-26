@@ -1,0 +1,10 @@
+[package]
+name = "tmw"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+clap = { version = "4.5.23", features = ["derive"] }
+anyhow = "1.0.95"
+confy = {  version = "0.6.1" , features = ["yaml_conf"], default-features = false}
+serde = { version = "1.0.216", features = ["derive"] }
