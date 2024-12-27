@@ -102,7 +102,7 @@ impl<'s> TmwRunner<'s> {
             .tmux
             .as_ref()
             .and_then(|it| it.socket_name.as_ref().map(|it| vec!["-L", &it]))
-            .unwrap_or(vec![]);
+            .unwrap_or_default();
 
         merged_args.extend(socket_args);
         merged_args.extend(args);
