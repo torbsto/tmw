@@ -4,7 +4,7 @@ version = "0.1.0"
 edition = "2021"
 repository = "https://github.com/torbsto/tmw"
 license = "MIT"
-description = "A tmux workspace CLI "
+description = "A tmux workspace CLI"
 
 [dependencies]
 clap = { version = "4.5.23", features = ["derive"] }
