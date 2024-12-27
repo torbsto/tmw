@@ -20,9 +20,7 @@ impl<'s> TmwRunner<'s> {
             .context(format!("Project {} is unknown", name))?;
 
         // ensure that the session provided session already exists
-        let result = Command::new("tmux")
-            .args(["has-session", "-t", name])
-            .output()?;
+        let result = self.tmux(vec!["has-session", "-t", name]).output()?;
 
         if !result.status.success() {
             let dir = workspace
@@ -30,13 +28,11 @@ impl<'s> TmwRunner<'s> {
                 .to_str()
                 .context("Invalid workspace directory")?;
 
-            Command::new("tmux")
-                .args(["new-session", "-d", "-s", name, "-c", dir])
+            self.tmux(vec!["new-session", "-d", "-s", name, "-c", dir])
                 .validated_output()?;
         }
 
-        Command::new("tmux")
-            .args(["switch-client", "-t", name])
+        self.tmux(vec!["switch-client", "-t", name])
             .validated_output()?;
 
         Ok(())
@@ -45,8 +41,8 @@ impl<'s> TmwRunner<'s> {
     pub fn preview_workspace(&self, name: &str) -> anyhow::Result<()> {
         // find the session id by listing all session in the specified format, parsing the result
         // and filter by name
-        let output = Command::new("tmux")
-            .args(["ls", "-F", "#{session_id},#{session_name}"])
+        let output = self
+            .tmux(vec!["ls", "-F", "#{session_id},#{session_name}"])
             .validated_output()?
             .stdout;
 
@@ -62,8 +58,7 @@ impl<'s> TmwRunner<'s> {
                 println!("Workspace {} is not running", name);
             }
             Some(session_id) => {
-                Command::new("tmux")
-                    .args(["capture-pane", "-ep", "-t", session_id.trim()])
+                self.tmux(vec!["capture-pane", "-ep", "-t", session_id.trim()])
                     // Pipe immediately to stdout of this process
                     .stdout(Stdio::inherit())
                     .validated_output()?;
@@ -76,8 +71,8 @@ impl<'s> TmwRunner<'s> {
     pub fn list_workspaces(&self, exclude_active: bool) -> anyhow::Result<()> {
         let condition = match exclude_active {
             true => {
-                let output = Command::new("tmux")
-                    .args(["display-message", "-p", "#S"])
+                let output = self
+                    .tmux(vec!["display-message", "-p", "#S"])
                     .validated_output()?
                     .stdout;
 
@@ -97,6 +92,24 @@ impl<'s> TmwRunner<'s> {
         println!("{}", names.join("\n"));
 
         Ok(())
+    }
+
+    fn tmux(&self, args: Vec<&str>) -> Command {
+        let mut merged_args = Vec::with_capacity(args.len() + 10);
+
+        let socket_args = self
+            .settings
+            .tmux
+            .as_ref()
+            .and_then(|it| it.socket_name.as_ref().map(|it| vec!["-L", &it]))
+            .unwrap_or(vec![]);
+
+        merged_args.extend(socket_args);
+        merged_args.extend(args);
+
+        let mut command = Command::new("tmux");
+        command.args(merged_args);
+        command
     }
 }
 

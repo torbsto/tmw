@@ -7,6 +7,12 @@ use std::path::{Path, PathBuf};
 #[derive(Default, Debug, Serialize, Deserialize, PartialEq)]
 pub struct Settings {
     pub workspaces: Vec<Workspace>,
+    pub tmux: Option<Tmux>,
+}
+
+#[derive(Default, Debug, Serialize, Deserialize, PartialEq)]
+pub struct Tmux {
+    pub socket_name: Option<String>,
 }
 
 impl Settings {
@@ -60,6 +66,32 @@ workspaces:
                     directory: PathBuf::from("/home/user/dev/project1"),
                 },
             ],
+            tmux: None,
+        };
+
+        assert_eq!(actual, expected);
+
+        Ok(())
+    }
+
+    #[test]
+    fn test_read_tmux() -> Result<()> {
+        let mut file = NamedTempFile::new()?;
+        file.write_all(
+            "
+tmux:
+  socket_name: test
+workspaces: []
+        "
+            .as_bytes(),
+        )?;
+
+        let actual = Settings::load(Some(file.path()))?;
+        let expected = Settings {
+            workspaces: vec![],
+            tmux: Some(Tmux {
+                socket_name: Some(String::from("test")),
+            }),
         };
 
         assert_eq!(actual, expected);
