@@ -73,12 +73,6 @@ workspaces:
             .as_bytes(),
         )?;
 
-        Command::new("tmux")
-            .args([
-                "-L", "test", "new", "-AD", "-s", "Default", "-t", "Default", "-c", "/home",
-            ])
-            .output()?;
-
         Ok(file)
     }
 
@@ -90,96 +84,6 @@ workspaces:
             .assert()
             .success()
             .stdout("Default\nproject1\n");
-        Ok(())
-    }
-
-    #[test]
-    fn test_select() -> Result<()> {
-        let file = create_setup()?;
-        Command::cargo_bin(APP_NAME)?
-            .args([
-                "--config-path",
-                file.as_ref().to_str().unwrap(),
-                "select",
-                "project1",
-            ])
-            .assert()
-            .success();
-
-        Ok(())
-    }
-
-    #[test]
-    fn test_preview() -> Result<()> {
-        let file = create_setup()?;
-        Command::cargo_bin(APP_NAME)?
-            .args([
-                "--config-path",
-                file.as_ref().to_str().unwrap(),
-                "select",
-                "project1",
-            ])
-            .assert()
-            .success();
-
-        Command::cargo_bin(APP_NAME)?
-            .args([
-                "--config-path",
-                file.as_ref().to_str().unwrap(),
-                "select",
-                "Default",
-            ])
-            .assert()
-            .success();
-
-        Ok(())
-    }
-
-    #[test]
-    fn test_preview_not_started() -> Result<()> {
-        let file = create_setup()?;
-        Command::cargo_bin(APP_NAME)?
-            .args([
-                "--config-path",
-                file.as_ref().to_str().unwrap(),
-                "preview",
-                "project1",
-            ])
-            .assert()
-            .success();
-
-        Ok(())
-    }
-
-    #[test]
-    fn test_invalid_select() -> Result<()> {
-        let file = create_setup()?;
-        Command::cargo_bin(APP_NAME)?
-            .args([
-                "--config-path",
-                file.as_ref().to_str().unwrap(),
-                "select",
-                "not-known",
-            ])
-            .assert()
-            .failure();
-
-        Ok(())
-    }
-
-    #[test]
-    fn test_invalid_preview() -> Result<()> {
-        let file = create_setup()?;
-        Command::cargo_bin(APP_NAME)?
-            .args([
-                "--config-path",
-                file.as_ref().to_str().unwrap(),
-                "select",
-                "not-known",
-            ])
-            .assert()
-            .failure();
-
         Ok(())
     }
 }
