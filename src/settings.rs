@@ -37,7 +37,7 @@ mod tests {
     #[test]
     fn test_read() -> Result<()> {
         let mut file = NamedTempFile::new()?;
-        file.write(
+        file.write_all(
             "
 workspaces:
   - name: Default
@@ -70,7 +70,7 @@ workspaces:
     #[test]
     fn test_invalid_yaml() -> Result<()> {
         let mut file = NamedTempFile::new()?;
-        file.write("Not a valid yaml".as_bytes())?;
+        file.write_all("Not a valid yaml".as_bytes())?;
 
         let settings = Settings::load(Some(file.path()));
         assert!(settings.is_err());

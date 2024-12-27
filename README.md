@@ -11,7 +11,7 @@ See `tmw --help`:
 
 ```
 ❯ tmw --help
-Usage: tmw <COMMAND>
+Usage: tmw [OPTIONS] <COMMAND>
 
 Commands:
   list     List all available workspaces
@@ -20,18 +20,19 @@ Commands:
   help     Print this message or the help of the given subcommand(s)
 
 Options:
-  -h, --help     Print help
-  -V, --version  Print version
+      --config-path <CONFIG_PATH>  Overwrite location of config, defaults to `$XDG_CONFIG_HOME/tmw/config.yml`
+  -h, --help                       Print help
+  -V, --version                    Print version
 ```
 
 The intended use is in combination with something like fzf:
 
-```
+```shell
 tmw select $(tmw list --exclude-active | fzf --prompt="Session> " --preview='tmw preview {}' --border=none)
 ```
 
 and integration with tmux, for example with a popup configured in your `tmux.conf`:
 
-```
+```shell
 bind-key f display-popup -E 'fish -c tmux-projects'
 ```
