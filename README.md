@@ -1,38 +1,30 @@
 # tmw
 
+[![Build Status](https://github.com/torbsto/tmw/actions/workflows/check.yml/badge.svg)](https://github.com/torbsto/tmw/actions/workflows/check.yml)
+
 A tmux workspace utility.
 
-tmw allows you to store workspaces in a configuration file, to list and preview the workspaces, and to select them.
-The workspace's session starts in a provided directory and exposes an env file for configuration.
+## Features
+
+* Configure your existing workspaces
+* List workspaces
+* Preview the workspaces current tmux pane
+* Select the workspace and switch the tmux session
 
 ## Usage
 
-See `tmw --help`:
+tmw is intended to be used with other tools like [fzf](https://github.com/junegunn/fzf)
+and [direnv](https://direnv.net/).
 
-```
-❯ tmw --help
-Usage: tmw [OPTIONS] <COMMAND>
-
-Commands:
-  list     List all available workspaces
-  select   Switch to the tmux session of the selected workspace
-  preview  Capture the current content of the selected workspace
-  help     Print this message or the help of the given subcommand(s)
-
-Options:
-      --config-path <CONFIG_PATH>  Overwrite location of config, defaults to `$XDG_CONFIG_HOME/tmw/config.yml`
-  -h, --help                       Print help
-  -V, --version                    Print version
-```
-
-The intended use is in combination with something like fzf:
+For example, the following command opens a fuzzy-search over all configured workspaces,
+shows a preview of the current pane for each workspace and switches to the selected workspace:
 
 ```shell
-tmw select $(tmw list --exclude-active | fzf --prompt="Session> " --preview='tmw preview {}' --border=none)
+tmw select $(tmw list --exclude-active | fzf --prompt="Session> " --preview='tmw preview {}')
 ```
 
-and integration with tmux, for example with a popup configured in your `tmux.conf`:
+It can be combined with a tmux pop-up:
 
 ```shell
-bind-key f display-popup -E 'fish -c tmux-projects'
+bind-key f display-popup -E '$SHELL -c $TMW_COMMAND'
 ```
