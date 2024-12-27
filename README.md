@@ -27,7 +27,7 @@ Options:
 The intended use is in combination with something like fzf:
 
 ```
-tmw select $(tmw list --exclude-active | command fzf --prompt="Session> " --preview='tmw preview {}' --border=none)
+tmw select $(tmw list --exclude-active | fzf --prompt="Session> " --preview='tmw preview {}' --border=none)
 ```
 
 and integration with tmux, for example with a popup configured in your `tmux.conf`:
