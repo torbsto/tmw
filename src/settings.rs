@@ -47,9 +47,9 @@ mod tests {
             "
 workspaces:
   - name: Default
-    directory:  \"/home/user\"
+    directory:  /home/user
   - name: project1
-    directory:  \"/home/user/dev/project1\"
+    directory:  /home/user/dev/project1
         "
             .as_bytes(),
         )?;

@@ -50,3 +50,40 @@ enum CliCommand {
         workspace: String,
     },
 }
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+    use assert_cmd::Command;
+    use std::io::Write;
+    use tempfile::NamedTempFile;
+
+    fn create_setup() -> Result<NamedTempFile> {
+        let mut file = NamedTempFile::new()?;
+        file.write_all(
+            "
+tmux:
+  socket_name: test
+workspaces:
+  - name: Default
+    directory:  /home
+  - name: project1
+    directory: /etc
+        "
+            .as_bytes(),
+        )?;
+
+        Ok(file)
+    }
+
+    #[test]
+    fn test_list() -> Result<()> {
+        let file = create_setup()?;
+        Command::cargo_bin(APP_NAME)?
+            .args(["--config-path", file.as_ref().to_str().unwrap(), "list"])
+            .assert()
+            .success()
+            .stdout("Default\nproject1\n");
+        Ok(())
+    }
+}
