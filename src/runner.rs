@@ -1,5 +1,5 @@
 use crate::settings::Settings;
-use anyhow::{anyhow, Context};
+use anyhow::{Context, anyhow};
 use std::process::{Command, Output, Stdio};
 
 pub struct TmwRunner<'s> {
@@ -20,7 +20,9 @@ impl<'s> TmwRunner<'s> {
             .context(format!("Project {} is unknown", name))?;
 
         // ensure that the session provided session already exists
-        let result = self.tmux(vec!["has-session", "-t", name]).output()?;
+        let result = self
+            .tmux(vec!["has-session", &format!("-t={}", name)])
+            .output()?;
 
         if !result.status.success() {
             let dir = workspace
@@ -58,10 +60,14 @@ impl<'s> TmwRunner<'s> {
                 println!("Workspace {} is not running", name);
             }
             Some(session_id) => {
-                self.tmux(vec!["capture-pane", "-ep", "-t", session_id.trim()])
-                    // Pipe immediately to stdout of this process
-                    .stdout(Stdio::inherit())
-                    .validated_output()?;
+                self.tmux(vec![
+                    "capture-pane",
+                    "-ep",
+                    &format!("-t={}", session_id.trim()),
+                ])
+                // Pipe immediately to stdout of this process
+                .stdout(Stdio::inherit())
+                .validated_output()?;
             }
         }
 

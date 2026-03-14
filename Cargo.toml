@@ -1,15 +1,15 @@
 [package]
 name = "tmw"
 version = "0.2.0"
-edition = "2021"
+edition = "2024"
 repository = "https://github.com/torbsto/tmw"
 license = "MIT"
 description = "A tmux workspace CLI"
 
 [dependencies]
-clap = { version = "4.5.23", features = ["derive"] }
+clap = { version = "4.6.0", features = ["derive"] }
 anyhow = "1.0.95"
-confy = { version = "0.6.1", features = ["yaml_conf"], default-features = false }
+confy = { version = "2.0.0", features = ["yaml_conf"], default-features = false }
 serde = { version = "1.0.216", features = ["derive"] }
 
 [dev-dependencies]
