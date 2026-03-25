@@ -60,14 +60,10 @@ impl<'s> TmwRunner<'s> {
                 println!("Workspace {} is not running", name);
             }
             Some(session_id) => {
-                self.tmux(vec![
-                    "capture-pane",
-                    "-ep",
-                    &format!("-t={}", session_id.trim()),
-                ])
-                // Pipe immediately to stdout of this process
-                .stdout(Stdio::inherit())
-                .validated_output()?;
+                self.tmux(vec!["capture-pane", "-ep", "-t", session_id.trim()])
+                    // Pipe immediately to stdout of this process
+                    .stdout(Stdio::inherit())
+                    .validated_output()?;
             }
         }
 
